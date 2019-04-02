@@ -11,10 +11,13 @@
 #'         \item{"fixed_alpha"}{Fix error correction parameters across regimes}
 #'         \item{"fixed_alpha_group}{Fix error correction parameters across
 #'                                   regimes belonging to a regime group.}
+#'         \item{"zero_alpha_group"}{}
 #'         \item{"fixed_gamma}{Fix short run parameters across regimes}
 #'         \item{"fixed_gamma_group}{Fix short run parameters across groups}
+#'         \item{"zero_gamma_group"}{}
 #'         \item{"fixed"}{}
 #'         \item{"fixed_group"}{}
+#'         \item{"zero_group}{}
 #'         \item{"none"}{The value of gamma changes with each regime}
 #'        }
 #'

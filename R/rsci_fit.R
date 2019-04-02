@@ -25,6 +25,8 @@
 #' @param restrict_alpha list, standard restriction setup - see details.
 #' @param restrict_gamma list, standard restriction setup - see details.
 #' @param restrict_omega list, standard restriction setup - see details.
+#' @param zero_restrictions list, give instructions for imposing zero
+#'        restrictions on particular parameters - see details.
 #'
 #' @details For standard restrictions on alpha, gamma or omega, use the name
 #'          attribute in the list. options are
@@ -42,6 +44,10 @@
 #'           stacked vectors of the freely varying parameters for alpha, gamma
 #'           or omega across regimes.
 #'
+#'           \code{zero_restrictions} are imposed using lists. For example,
+#'           imposing on the second row of the first column on the alpha in
+#'           regime one, one writes list(alpha_1 = matrix(0, NA, 0, 0), 2, 2)
+#'
 #' @export
 #' @return an rsci_fit object
 
@@ -55,6 +61,7 @@ rsci_fit <- function(spec,
                      restrict_alpha = c(name = "none", Ha = NULL, ha = NULL),
                      restrict_gamma = c(name = "none", Hg = NULL, hg = NULL),
                      restrict_omega = c(name = "none", Ho = NULL, ho = NULL),
+                     zero_restrictions = NULL,
                      ...) {
 
 

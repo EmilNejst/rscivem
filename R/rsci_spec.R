@@ -8,7 +8,9 @@
 #' @export
 #' @return an rsci_spec object holding the model specification without parameter
 #'         values.
-rsci_spec <- function(lags, rank, regimes) {
+rsci_spec <- function(lags,
+                      rank,
+                      regimes) {
 
   spec <- list(
     lags = lags,

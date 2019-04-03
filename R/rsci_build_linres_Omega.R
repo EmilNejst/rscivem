@@ -1,5 +1,5 @@
 #' @title Construct linear restriction matrices for a set of common
-#'        specifications
+#'        specifications.
 #'
 #' @param dim integer, dimension of the system
 #' @param regimes tibble, a table with the regime names and groups
@@ -15,7 +15,7 @@
 #'
 #' @return a list with the restriction matrices H_ec and h_ec for the chosen
 #'         standard specification.
-std_lin_res_omega <- function(dim, regimes, name) {
+rsci_build_linres_Omega <- function(dim, regimes, name = "none") {
 
   stopifnot(name %in% c("fixed", "fixed_group", "none"))
 

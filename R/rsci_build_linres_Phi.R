@@ -4,7 +4,9 @@
 #' @param dim integer, dimension of the system
 #' @param rank integer, the number of cointegration relations
 #' @param lags integer, the number of lags in the model
-#' @param regimes tibble, a table with the regime names and groups
+#' @param n_regimes integer, the number of regimes
+#' @param regimes tibble, a table with the regime names and groups. Only needed
+#'        if fixed_group is used.
 #' @param name string, name of the specification.
 #'        Options are
 #'        \itemize{
@@ -15,7 +17,12 @@
 #'
 #' @export
 #' @return a list with the restriction matrices Ha and ha
-rsci_build_linres_Phi <- function(dim, rank, regimes, restriction = "none") {
+rsci_build_linres_Phi <- function(dim,
+                                  rank,
+                                  lags,
+                                  n_regimes,
+                                  regimes = NULL,
+                                  restriction = "none") {
 
   res_options <-
     c("fixed",
@@ -24,22 +31,24 @@ rsci_build_linres_Phi <- function(dim, rank, regimes, restriction = "none") {
 
   stopifnot(restriction %in% res_options)
 
-  n_regs <- nrow(regimes)
+  n_regimes <- nrow(regimes)
   if(restriction = "none") {
 
     H <- Matrix::bdiag(
-      lapply(seq_len(n_regs), function(x) {diag(dim*rank + dim^2*(lags - 1))}))
-    h <- rep(0, n_regs*dim*rank + dim^2*(lags - 1))
+      lapply(
+        X = seq_len(n_regimes),
+        FUN = function(x) {diag(dim*rank + dim^2*(lags - 1))}))
+    h <- rep(0, n_regimes*dim*rank + dim^2*(lags - 1))
 
   }else if("fixed"){
     Hl <- do.call(
       what = rbind,
       args = lapply(
-        X = seq_len(n_regs),
+        X = seq_len(n_regimes),
         FUN = function(x) {
           rbind(diag(dim*rank), matrix(0, dim^2*(lags - 1), dim*rank)) }))
     Hr <- do.call(rbind, lapply(
-      X = seq_len(n_regs),
+      X = seq_len(n_regimes),
       FUN = function(x) {
         rbind(matrix(0, dim*rank, dim^2*(lags - 1)),
               diag(dim^2*(lags - 1)))}))

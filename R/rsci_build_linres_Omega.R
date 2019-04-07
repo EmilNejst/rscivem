@@ -2,7 +2,9 @@
 #'        specifications.
 #'
 #' @param dim integer, dimension of the system
-#' @param regimes tibble, a table with the regime names and groups
+#' @param n_regimes integer, the number of regimes
+#' @param regimes tibble, a table with the regime names and groups. Only needed
+#'        if the option "fixed_group" is chosen.
 #' @param name string, name of the specification.
 #'        Options are
 #'        \itemize{
@@ -15,7 +17,7 @@
 #'
 #' @return a list with the restriction matrices H_ec and h_ec for the chosen
 #'         standard specification.
-rsci_build_linres_Omega <- function(dim, regimes, name = "none") {
+rsci_build_linres_Omega <- function(dim, n_regimes, regimes = NULL, name = "none") {
 
   stopifnot(name %in% c("fixed", "fixed_group", "none"))
 

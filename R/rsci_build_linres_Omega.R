@@ -2,32 +2,24 @@
 #'        specifications.
 #'
 #' @param dim integer, dimension of the system
-#' @param n_regimes integer, the number of regimes
+#' @param nreg integer, the number of regimes
 #' @param regimes tibble, a table with the regime names and groups. Only needed
 #'        if the option "fixed_group" is chosen.
 #' @param name string, name of the specification.
-#'        Options are
-#'        \itemize{
-#'         \item{"fixed"}{Fix short run parameters across regimes}
-#'         \item{"fixed_group"}{Fix short run parameters across regimes
-#'                                    belonging to a regime group.}
-#'         \item{"none"}{The value of lambda changes with each regime.}
-#'        }
-#' @param
 #'
+#' @export
 #' @return a list with the restriction matrices H_ec and h_ec for the chosen
 #'         standard specification.
-rsci_build_linres_Omega <- function(dim, n_regimes, regimes = NULL, name = "none") {
+rsci_build_linres_Omega <- function(dim, nreg, regimes = NULL, name = "none") {
 
   stopifnot(name %in% c("fixed", "fixed_group", "none"))
 
-  nregs <- nrow(regimes)
   if(name == "fixed") {
 
     H <- do.call(
       what = rbind,
       args = lapply(
-        X = seq_len(nregs),
+        X = seq_len(nreg),
         FUN = function(x) { matrixcalc::duplication.matrix(dim) }))
 
   }else if(name == "fixed_group") {
@@ -38,8 +30,8 @@ rsci_build_linres_Omega <- function(dim, n_regimes, regimes = NULL, name = "none
 
     H <- Matrix::bdiag(
       lapply(
-        X = seq_len(nregs),
-        FUN =function(x) { matrixcalc::duplication.matrix(dim) }))
+        X = seq_len(nreg),
+        FUN = function(x) { matrixcalc::duplication.matrix(dim) }))
 
   }
   h <- rep(0, nrow(H))

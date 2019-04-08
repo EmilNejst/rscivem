@@ -4,17 +4,43 @@
 \alias{rsci_model}
 \title{Create a regime switching cointegrated vector error correction}
 \usage{
-rsci_model(spec, parameters, fn_regprob)
+rsci_model(dim, rank, lags, Phi, Omega, beta, lambda,
+  linres_Phi = rsci_build_linres_Phi(dim, rank, lags, nreg),
+  linres_Omega = rsci_build_linres_Omega(dim, nreg))
 }
 \arguments{
-\item{spec}{rsci_spec, an rsci_spec object with the model specification}
+\item{rank}{integer, the cointegration rank.}
 
-\item{fn_regprob}{function, a function that takes two arguments
-\code{ fn_regprob(pars, data) } where pars is a rsci_pars
-object and data is an xts object with the time series data used in
-rsci_fit. The function must return a simple vector of regime
-probabilities that has length corresponding to the number of columns
-in the regimes tibble in the rsci_spec object.}
+\item{lags}{integer, the number of lags in levels in the model.}
+
+\item{Phi}{list, a list with Phi matrices for all regimes}
+
+\item{Omega}{list, a list with the Omega matrices for all regimes}
+
+\item{beta}{matrix, the matrix of cointegration relations}
+
+\item{lambda}{vector, the vector of probability parameters}
+
+\item{linres_Phi}{list, a list of an H matrix and an h vector for imposing
+linear restrictions on a vector given by,
+\deqn{ vec(\Phi) = vec((Phi_1, Phi_2,..., Phi_m))  }
+such that
+\deqn{ vec(\Phi) = H\rho + h}
+where m refers to the number of regimes and \eqn{\rho} .
+This use of linear restrictions allows the user to impose cross regime
+restrictions. That is useful if one wishes certain elements to be
+fixed across regimes.
+NULL is default resulting in an unrestricted system.}
+
+\item{linres_Omega}{list, a list of an H matrix and an h vector for imposing
+linear restriction on a vector given by,
+\deqn{vec(\Omega) = (vec(\Omega_1), vec(\Omega_2),...,vec(\Omega_m))}
+such that
+\deqn{ vec(\Omega) = H\nu + h}
+where \eqn{\nu} is the vector of freely varying parameters in Omega.
+NULL is default and will result in an unrestricted system.}
+
+\item{nreg}{integer, the number of regimes.}
 }
 \value{
 an rsci_model object holding the model

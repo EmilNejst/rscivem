@@ -4,7 +4,7 @@
 #' @param dim integer, the dimension of the system
 #' @param regs integer, the number of regimes
 #'
-#' @return
+#' @return the list Omegas by regime
 
 vec_Omega_2_list_Omega <- function(vecOmega, dim, regs) {
 

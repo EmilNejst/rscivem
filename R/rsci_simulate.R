@@ -2,14 +2,15 @@
 #'
 #' @param model rsci_model obj
 #' @param fn_prob function, a function that provides the regime probabilities
-#'        given a model object and data.
+#'        given a rsci_data type object.
 #' @param sample_size integer, the size of the sample.
 #' @param data_exo xts, if fn_prob depends on exogenous variables, they are
 #'        provided here.
 #' @param burn integer, a number of periods to burn from the begining of the
 #'        sample
 #'
-#' @regime a matrix with simulated values for the model
+#' @export
+#' @return a matrix with simulated values for the model
 
 rsci_simulate <- function(model, fn_prob, sample_size, data_exo = NULL,
                           burn = NULL) {
@@ -46,8 +47,6 @@ rsci_simulate <- function(model, fn_prob, sample_size, data_exo = NULL,
     }
     st <- sample(seq_len(r), 1, prob = pt)
 
-
-    X[i,] <- X[i-1,] + (X[i-1,] %*% beta)  Phi[[st]]
 
   }
 }

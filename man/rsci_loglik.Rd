@@ -4,10 +4,15 @@
 \alias{rsci_loglik}
 \title{Calculate the logliklihood value some data given a model.}
 \usage{
-rsci_loglik(model, data)
+rsci_loglik(model, data_struct, data_regprob = NULL)
 }
 \arguments{
 \item{model}{rsci_model, a model object with the model in question}
+
+\item{data_regprob}{xts, a matrix with the data used in the fn_prob
+function. If NULL, then data is used as input for calulating regime
+probabilities through fn_probs and the fn_probs should reflext
+that.}
 
 \item{data}{xts, the data to be fitted}
 }

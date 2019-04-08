@@ -10,9 +10,8 @@
 #' @export
 #' @return the log-likelihood value
 
-rsci_loglik <- function(model, data, data_regprob = NULL) {
+rsci_loglik <- function(model, data_struct, data_regprob = NULL) {
 
-  data_struct <- build_data_structures(model$spec, data)
   residuals <- calculate_regime_residuals(
     Phi = model$pars$Phi,
     beta = model$pars$beta,
@@ -22,7 +21,7 @@ rsci_loglik <- function(model, data, data_regprob = NULL) {
   ll <- sum(
     purrr::pmap2_dbl(
       .l = list(.e = residuals, .o = model$pars$Omega, .p = regprob),
-      .f = ~ {
+      .f = function(.e, .o, .p) {
         oe <- .x %*% solve(.o)
         nd <- rowSums(.p * (-.5*log(determinant(.o)) - 0.5*colSums(e * oe))) }))
 

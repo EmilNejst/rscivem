@@ -12,15 +12,9 @@
 #'        fn_update(vec_pars, model). These are the  free parameters in beta and
 #'        the probability functions.
 #' @param fn_prob function, a function that takes at least two arguments
-#'        \code{ fn_prob(pars, data, data_exo = NULL) } where pars is a
-#'        rsci_pars object and data is an xts object with the time series data
-#'        used in rsci_fit. The function must return a list of simple vectors of
-#'        regime of probabilities that has length corresponding to the number of
-#'        observations in the data. The regime probabilities at time t must
-#'        naturally sum to one.
-#' @param data_exo xts, exogenous data that enters the regime probabilities.
-#'        default is NULL as the standard model using endogenous data for the
-#'        regime probabilities.
+#'        \code{ fn_prob(pars, data_struct) } where pars is a
+#'        rsci_pars object and data_struct is the object given by the rsci_data
+#'        function.
 #' @param ... additional information to be passed to optim().
 #'
 #' @export
@@ -31,7 +25,6 @@ rsci_fit <- function(model,
                      init_pars,
                      fn_update,
                      fn_prob,
-                     data_exo,
                      ...) {
 
   # Model dimensions -----------------------------------------------------------
@@ -40,11 +33,17 @@ rsci_fit <- function(model,
   rank <- model$rank
   nreg <- model$nreg
 
+  # Data structures ------------------------------------------------------------
+  data_struct <- rsci_data(model, data, data_exo)
+
   # Function to optimize -------------------------------------------------------
   opt_fn <- function(pars) {
 
     model <- fn_update(pars, model)
-    rp <- fn_prob(model$pars, data, data_exo)
+
+    rp <- fn_prob(model$pars, data_struct)
+
+    # Estimate Phi for given probabilities and beta ----------------------------
     vecPhi <- estimate_least_squares(
       Z = data_struct$Z,
       beta = model$beta,
@@ -52,25 +51,29 @@ rsci_fit <- function(model,
       regprobs = rp)
     Phi <- vec_Phi_2_List_Phi(vecPhi, dim, rank, lags, nreg)
     model$Phi <- Phi
+
+    # Estimate Omega for given probabilities and beta --------------------------
     vecOmega <- estimate_error_covariance(
       Phi, beta, data_struct$Z, rp, H, h)
     Omega <- vec_Omega_2_list_Omega(vecOmega, dim, nreg)
     model$Omega <- Omega
 
-    - rsci_loglik(model, data)
+    # Calculate the negative likelihod -----------------------------------------
+    - rsci_loglik(model, data_struct)
   }
 
   # Optimized the concentrated likelihood --------------------------------------
   opt_res <- optim(init_pars, opt_fn, ...)
 
   # Build and return the fit object --------------------------------------------
-  model_fit <- update(opt_res$par, model)
+  model_fit <- fn_update(opt_res$par, model)
   fit <- list(
     model = model_fit,
     loglik = opt_res$value,
     data = data,
     data_exo = data,
-    fn_prob = fn_prob
-  )
+    fn_prob = fn_prob)
 
+  class(fit) <- 'rsci_fit'
+  rsci_fit
 }

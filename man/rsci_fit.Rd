@@ -5,38 +5,30 @@
 \title{Fit a regime switching cointegration vector error correction model to
        data.}
 \usage{
-rsci_fit(spec, init_lambda, init_b, fn_b2beta, fn_regprobs, data,
-  restrict_alpha = "none", restrict_gamma = "none",
-  restrict_omega = "none")
+rsci_fit(model, data, init_pars, fn_update, fn_prob, ...)
 }
 \arguments{
-\item{spec}{rsci_spec, a specification object}
+\item{model}{rsci_model object, the object containing the initial model.}
 
-\item{init_lambda}{vector a vector of}
+\item{init_pars}{vector or number, initial parameters for the freely varying
+elements in beta and the parameters in the probability function.}
 
-\item{init_b}{vector, a vector of initial values for the estimated parts
-of beta.}
+\item{fn_update}{function, a function that takes the values from init_pars
+and allocates the parameters correctly to the model object. Returns a
+model object. The function must take the following arguments
+fn_update(vec_pars, model). These are the  free parameters in beta and
+the probability functions.}
 
-\item{fn_b2beta}{function, a function that takes the values from b and
-produces a matrix of size (p x r) coresponding to the long run
-cointegration vectors.}
+\item{fn_prob}{function, a function that takes at least two arguments
+\code{ fn_prob(pars, data_struct) } where pars is a
+rsci_pars object and data_struct is the object given by the rsci_data
+function.}
 
-\item{data}{xts, a matrix with the data.}
-
-\item{restrict_alpha}{string, a string with standard options for restricting
-alpha to be the same across certain regimes.}
-
-\item{fn_regprob}{function, a function that takes two arguments
-\code{ fn_regprob(model, data) } where model is a rsci_model
-object and data is an xts object with the time series data used in
-rsci_fit. The function must return a simple vector of regime
-probabilities that has length corresponding to the number of columns
-in the regimes tibble in the rsci_spec object.}
+\item{...}{additional information to be passed to optim().}
 }
 \value{
 an rsci_fit object
 }
 \description{
-Fit a regime switching cointegration vector error correction model to
-       data.
+This function takes data
 }

@@ -4,23 +4,18 @@
 #' @param dim integer, dimension of the system
 #' @param rank integer, the number of cointegration relations
 #' @param lags integer, the number of lags in the model
-#' @param n_regimes integer, the number of regimes
+#' @param nreg integer, the number of regimes
 #' @param regimes tibble, a table with the regime names and groups. Only needed
 #'        if fixed_group is used.
 #' @param name string, name of the specification.
 #'        Options are
-#'        \itemize{
-#'         \item{"fixed"}{}
-#'         \item{"fixed_group"}{}
-#'         \item{"none"}{The value of gamma changes with each regime}
-#'        }
 #'
 #' @export
 #' @return a list with the restriction matrices Ha and ha
 rsci_build_linres_Phi <- function(dim,
                                   rank,
                                   lags,
-                                  n_regimes,
+                                  nreg,
                                   regimes = NULL,
                                   restriction = "none") {
 
@@ -31,30 +26,31 @@ rsci_build_linres_Phi <- function(dim,
 
   stopifnot(restriction %in% res_options)
 
-  n_regimes <- nrow(regimes)
-  if(restriction = "none") {
+  if(restriction == "none") {
 
     H <- Matrix::bdiag(
       lapply(
-        X = seq_len(n_regimes),
+        X = seq_len(nreg),
         FUN = function(x) {diag(dim*rank + dim^2*(lags - 1))}))
     h <- rep(0, n_regimes*dim*rank + dim^2*(lags - 1))
 
-  }else if("fixed"){
+  }else if(restriction == "fixed"){
     Hl <- do.call(
       what = rbind,
       args = lapply(
-        X = seq_len(n_regimes),
+        X = seq_len(nreg),
         FUN = function(x) {
           rbind(diag(dim*rank), matrix(0, dim^2*(lags - 1), dim*rank)) }))
-    Hr <- do.call(rbind, lapply(
-      X = seq_len(n_regimes),
-      FUN = function(x) {
-        rbind(matrix(0, dim*rank, dim^2*(lags - 1)),
-              diag(dim^2*(lags - 1)))}))
+    Hr <- do.call(
+        what = rbind,
+        args = lapply(
+          X = seq_len(nreg),
+          FUN = function(x) {
+            rbind(matrix(0, dim*rank, dim^2*(lags - 1)),
+                  diag(dim^2*(lags - 1)))}))
     H <- cbind(Hl,Hr)
 
-  }else if("fixed_group") {
+  }else if(restriction == "fixed_group") {
 
   }
 

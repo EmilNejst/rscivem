@@ -7,8 +7,7 @@
 #' @param regprobs list, a list with vectors regime probabilities
 #' @param H matrix, the restriction matrix
 #'
-#'
-#' @return
+#' @return the vectorized version of Omega
 
 estimate_error_covariance <- function(Phi, beta, Z, regprobs, H, h) {
 

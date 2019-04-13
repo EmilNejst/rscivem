@@ -5,12 +5,12 @@
 #' @export
 #' @return a list with a list of S matrices and a list of Z matrices.
 
-rsci_data <- function(model, data, data_exo = NULL) {
+rsci_data <- function(rank, lags, data, data_exo = NULL) {
   Z <- list(Z0 = NULL, Z1 = NULL, Z2 = NULL)
 
   p <- ncol(data)
-  q <- model$lags
-  r <- model$rank
+  q <- lags
+  r <- rank
   n <- nrow(data)
   m <- n - q
   dates <- zoo::index(data)

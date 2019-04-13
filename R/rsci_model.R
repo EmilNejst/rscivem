@@ -1,15 +1,23 @@
 #' @title Create a regime switching cointegrated vector error correction
 #'
+#' @param dim integer, the number of dimentions in the data
 #' @param lags integer, the number of lags in levels in the model.
 #' @param rank integer, the cointegration rank.
 #' @param nreg integer, the number of regimes.
-#' @param Phi list, a list with Phi matrices for all regimes
-#' @param Omega list, a list with the Omega matrices for all regimes
 #' @param beta matrix, the matrix of cointegration relations
 #' @param lambda vector, the vector of probability parameters
+#' @param fn_prob function, a function that takes at least two arguments
+#'        \code{ fn_prob(pars, data_struct) } where pars is a the vector of
+#'        cointegration and probability parameters. data_struct is a rsci_data
+#'        object.
+#' @param Phi list, a list with Phi matrices for all regimes. Default is NULL
+#'        in which case a standardized procedure is used for estimating initial
+#'        values.
+#' @param Omega list, a list with the Omega matrices for all regimes. Default is
+#'        NULL in which case a standardized procedure is used.
 #' @param linres_Phi list, a list of an H matrix and an h vector for imposing
 #'        linear restrictions on a vector given by,
-#'        \deqn{ vec(\Phi) = vec((Phi_1, Phi_2,..., Phi_m))  }
+#'        \deqn{ vec(\Phi) = vec((\Phi_1, \Phi_2,..., \Phi_m))  }
 #'        such that
 #'        \deqn{ vec(\Phi) = H\rho + h}
 #'        where m refers to the number of regimes and \eqn{\rho} .
@@ -30,10 +38,12 @@
 rsci_model <- function(dim,
                        rank,
                        lags,
-                       Phi,
-                       Omega,
+                       nreg,
                        beta,
                        lambda,
+                       fn_prob,
+                       Phi = NULL,
+                       Omega = NULL,
                        linres_Phi = rsci_build_linres_Phi(dim, rank, lags, nreg),
                        linres_Omega = rsci_build_linres_Omega(dim, nreg)) {
 
@@ -41,10 +51,12 @@ rsci_model <- function(dim,
     dim = dim,
     rank = rank,
     lags = lags,
+    nreg = nreg,
     Phi = Phi,
     Omega = Omega,
     beta = beta,
     lambda = lambda,
+    fn_prob = fn_prob,
     linres_Phi = linres_Phi,
     linres_Omega = linres_Omega)
 

@@ -5,7 +5,7 @@
 \title{Fit a regime switching cointegration vector error correction model to
        data.}
 \usage{
-rsci_fit(model, data, init_pars, fn_update, fn_prob, ...)
+rsci_fit(model, data, init_pars, fn_update, data_exo = NULL, ...)
 }
 \arguments{
 \item{model}{rsci_model object, the object containing the initial model.}
@@ -13,16 +13,14 @@ rsci_fit(model, data, init_pars, fn_update, fn_prob, ...)
 \item{init_pars}{vector or number, initial parameters for the freely varying
 elements in beta and the parameters in the probability function.}
 
-\item{fn_update}{function, a function that takes the values from init_pars
-and allocates the parameters correctly to the model object. Returns a
-model object. The function must take the following arguments
-fn_update(vec_pars, model). These are the  free parameters in beta and
+\item{fn_update}{function, a function that takes the values from a vector
+pars and allocates the parameters correctly to the model object.
+Returns a model object. The function must take the following arguments
+fn_update(pars, model). These are the  free parameters in beta and
 the probability functions.}
 
-\item{fn_prob}{function, a function that takes at least two arguments
-\code{ fn_prob(pars, data_struct) } where pars is a
-rsci_pars object and data_struct is the object given by the rsci_data
-function.}
+\item{data_exo}{xts, exogenous data in case the regime switching depends on
+such.}
 
 \item{...}{additional information to be passed to optim().}
 }

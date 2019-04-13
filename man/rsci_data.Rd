@@ -4,7 +4,7 @@
 \alias{rsci_data}
 \title{Build the classic cointegration data structures Z0, Z1 and Z2.}
 \usage{
-rsci_data(model, data, data_exo = NULL)
+rsci_data(rank, lags, data, data_exo = NULL)
 }
 \arguments{
 \item{data}{xts, a matrix with the data that should be fitted.}

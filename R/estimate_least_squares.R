@@ -42,4 +42,5 @@ estimate_least_squares <- function(Z, beta, Omega, regprobs, H, h) {
   }
 
   vecPhi <- as.vector(H %*% free_pars + h)
+
 }

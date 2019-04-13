@@ -32,7 +32,7 @@ rsci_build_linres_Phi <- function(dim,
       lapply(
         X = seq_len(nreg),
         FUN = function(x) {diag(dim*rank + dim^2*(lags - 1))}))
-    h <- rep(0, n_regimes*dim*rank + dim^2*(lags - 1))
+    h <- rep(0, nreg*dim*rank + dim^2*(lags - 1))
 
   }else if(restriction == "fixed"){
     Hl <- do.call(

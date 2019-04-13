@@ -9,7 +9,7 @@
 #'
 #' @return the vectorized version of Omega
 
-estimate_error_covariance <- function(Phi, beta, Z, regprobs, H, h) {
+estimate_error_covariances <- function(Phi, beta, Z, regprobs, H, h) {
 
   res <- calculate_residuals(Phi, beta, Z)
   p <- ncol(Z$Z0)
@@ -40,4 +40,5 @@ estimate_error_covariance <- function(Phi, beta, Z, regprobs, H, h) {
 
   o <- solve(crossprod(H, P) %*% H, crossprod(H, vecE - P %*% h))
   vecOmega <- as.vector(H %*% o + h)
+
 }

@@ -10,12 +10,14 @@
 #' @export
 #' @return a list with the restriction matrices H_ec and h_ec for the chosen
 #'         standard specification.
-rsci_build_linres_Omega <- function(dim, nreg, regimes = NULL, name = "none") {
+rsci_build_linres_Omega <- function(dim,
+                                    nreg,
+                                    regimes = NULL,
+                                    name = "none") {
 
   stopifnot(name %in% c("fixed", "fixed_group", "none"))
 
   if(name == "fixed") {
-
     H <- do.call(
       what = rbind,
       args = lapply(
@@ -36,4 +38,5 @@ rsci_build_linres_Omega <- function(dim, nreg, regimes = NULL, name = "none") {
   }
   h <- rep(0, nrow(H))
 
+  list(H, h)
 }

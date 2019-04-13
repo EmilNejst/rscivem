@@ -37,8 +37,17 @@ rsci_fit <- function(model,
 
   # Estimate Initial Values for Omega and Phi if not provided ------------------
   if(is.null(model$Omega)) {
+
     rp <- model$fn_prob(init_pars, ds)
-    Omega <- initial_Omega(nreg, ds$Z, model$beta, ds$Z, model$Phi, model)
+    model$Omega <- initial_Omega(
+      nreg,
+      ds$Z,
+      model$beta,
+      ds$Z,
+      model$linres_Omega$H,
+      model$linres_Omega$h,
+      model$Phi)
+
   }
 
   # Function to optimize ----
@@ -51,21 +60,28 @@ rsci_fit <- function(model,
 
     # Estimate Phi for given probabilities and beta ----
     vecPhi <- estimate_least_squares(
-      Z = data_struct$Z,
+      Z = ds$Z,
       beta = model$beta,
       Omega = model$Omega,
-      regprobs = rp)
+      regprobs = rp,
+      H = model$linres_Phi$H,
+      h = model$linres_Phi$h)
     Phi <- vec_Phi_2_List_Phi(vecPhi, dim, rank, lags, nreg)
     model$Phi <- Phi
 
     # Estimate Omega for given probabilities and beta ----
-    vecOmega <- estimate_error_covariance(
-      Phi, beta, data_struct$Z, rp, H, h)
+    vecOmega <- estimate_error_covariances(
+      Phi = model$Phi,
+      beta = model$beta,
+      Z = ds$Z,
+      regprobs = rp,
+      H = model$linres_Omega$H,
+      h = model$linres_Omega$h)
     Omega <- vec_Omega_2_list_Omega(vecOmega, dim, nreg)
     model$Omega <- Omega
 
     # Calculate the negative likelihod ----
-    - rsci_loglik(model, data_struct)
+    - rsci_loglik(model, rp, ds)
   }
 
   # Optimize the concentrated likelihood ---------------------------------------

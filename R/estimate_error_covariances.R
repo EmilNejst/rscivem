@@ -11,14 +11,15 @@
 
 estimate_error_covariances <- function(Phi, beta, Z, regprobs, H, h) {
 
-  res <- calculate_residuals(Phi, beta, Z)
+  res <- calculate_regime_residuals(Phi, beta, Z)
   p <- ncol(Z$Z0)
   n <- length(Phi)
-  nobs <- rows(Z$Z0)
+  nobs <- nrow(Z$Z0)
+  iota <- matrix(1, 1, p)
   p_res <- purrr::map2(
     .x = res,
     .y = regprobs,
-    .f = ~ .x * (.y %*% diag(p)) )
+    .f = ~ .x * (.y %*% iota) )
   E <- do.call(
     what = cbind,
     args = purrr::map2(
@@ -27,17 +28,17 @@ estimate_error_covariances <- function(Phi, beta, Z, regprobs, H, h) {
       .f = ~ crossprod(.x, .y) ))
   vecE <- as.vector(E)
 
-  rp <- do.call(merge, regprobs)
   P <- 0
   I <- diag(p^2)
   for(i in 1:nobs) {
-    p <- rp[i,1] * I
+    p <- regprobs[[1]][i] * I
     for(j in 2:n) {
-      p <- Matrix::bdiag(p, rp[i,j] * I)
+      p <- Matrix::bdiag(p, regprobs[[j]][i] * I)
     }
     P <- P + p
   }
 
+  P <- as.matrix(P)
   o <- solve(crossprod(H, P) %*% H, crossprod(H, vecE - P %*% h))
   vecOmega <- as.vector(H %*% o + h)
 

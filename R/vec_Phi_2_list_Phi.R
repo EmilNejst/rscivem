@@ -13,10 +13,10 @@ vec_Phi_2_List_Phi <- function(vecPhi, dim, rank, lags, nreg) {
   for(i in 1:nreg) {
 
     lPhi[[i]] <- matrix(
-      data = vecPhi[(i-1)*(dim*rank + dim^2*(lags-1)) +
-                      1:(dim*rank + dim^2*(lags-1))],
+      data = vecPhi[(i - 1)*(dim*rank + dim^2*(lags - 1)) +
+                      1:(dim*rank + dim^2*(lags - 1))],
       nrow = dim,
-      ncol = dim*(rank + lags-1))
+      ncol = rank + dim*(lags - 1))
 
   }
   lPhi

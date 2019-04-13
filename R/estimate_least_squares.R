@@ -17,28 +17,33 @@ estimate_least_squares <- function(Z, beta, Omega, regprobs, H, h) {
   Z2 <- Z$Z2
 
   iOmega <- lapply(Omega, solve)
-  U <- ifelse(is.null(Z2), Z1 %*% beta, cbind(Z1 %*% beta, Z2))
+  if(is.null(Z2)) {
+    U <- Z1 %*% beta
+  }else {
+    U <- cbind(Z1 %*% beta, Z2)
+  }
   nU <- ncol(U)
+  iota <- matrix(1, 1, nU)
   Mm <- purrr::pmap(
     .l = list(.o = iOmega, .p = regprobs),
     .f = function(.o, .p) {
-      Ust <- U * (.p %*% diag(nU))
+      Ust <- U * (.p %*% iota)
       kronecker(.o, crossprod(U, Ust)) })
-  M <- Matrix::bdiag(Mm)
+  M <- as.matrix(Matrix::bdiag(Mm))
 
   if(!is.null(Z2)) {
     Y <- purrr::pmap(
       .l = list(.o = iOmega, .p = regprobs),
       .f = function(.o, .p) {
-        Ust <- U * (.p %*% diag(nU))
-        as.vector(crossprod(Z2, Ust) %*% .o)  })
-    Y <- do.call(rbind, Y)
+        Ust <- U * (.p %*% iota)
+        as.vector(crossprod(Ust, Z2) %*% .o)  })
+    Y <- do.call(c, Y)
   }
 
   if(!is.null(Z2)) {
-    free_pars <- solve(crossprod(H, M) %*% H, Y %*% H - crossprod(h, M) %*% H)
+    free_pars <- solve(crossprod(H, M) %*% H, t(Y %*% H - crossprod(h, M) %*% H))
   }else {
-    free_pars <- solve(crossprod(H, M) %*% H, crossprod(h, M) %*% H)
+    free_pars <- solve(crossprod(H, M) %*% H, t(crossprod(h, M) %*% H))
   }
 
   vecPhi <- as.vector(H %*% free_pars + h)

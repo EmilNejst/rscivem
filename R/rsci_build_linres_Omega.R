@@ -38,5 +38,5 @@ rsci_build_linres_Omega <- function(dim,
   }
   h <- rep(0, nrow(H))
 
-  list(H, h)
+  list(H = as.matrix(H), h = as.matrix(h))
 }

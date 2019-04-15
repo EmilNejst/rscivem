@@ -14,11 +14,16 @@ rsci_loglik <- function(model, regprobs, data_struct) {
     beta = model$beta,
     Z = data_struct$Z)
 
-  ll <- sum(
-    purrr::pmap_dbl(
-      .l = list(.e = residuals, .o = model$Omega, .p = regprobs),
-      .f = function(.e, .o, .p) {
-        oe <- .e %*% solve(.o)
-        nd <- rowSums(.p * (-.5*log(determinant(.o)) - 0.5*colSums(e * oe))) }))
+  lltp <- purrr::pmap(
+    .l = list(.e = residuals, .o = model$Omega, .p = regprobs),
+    .f = function(.e, .o, .p) {
+      oe <- t(solve(.o, t(.e)))
+      nd <- - .p * (.5*log(det(.o)) + 0.5*rowSums(.e * oe)) })
+
+  lltp <- do.call(
+    what = cbind,
+    args = lltp)
+
+  ll <- sum(rowSums(lltp))
 
 }

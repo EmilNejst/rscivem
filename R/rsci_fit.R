@@ -52,50 +52,41 @@ rsci_fit <- function(model,
 
   # Function to optimize ----
   opt_fn <- function(pars) {
-    # Update model with new parameters ----
-    model <- fn_update(pars, model)
+    # Update the model with the given parameters
+    mod <- fn_update(pars, model)
 
-    # Update regime probabilities ----
+    # Update regime probabilities ---
     rp <- model$fn_prob(pars, ds)
 
-    # Estimate Phi for given probabilities and beta ----
-    vecPhi <- estimate_least_squares(
-      Z = ds$Z,
-      beta = model$beta,
-      Omega = model$Omega,
-      regprobs = rp,
-      H = model$linres_Phi$H,
-      h = model$linres_Phi$h)
-    Phi <- vec_Phi_2_List_Phi(vecPhi, dim, rank, lags, nreg)
-    model$Phi <- Phi
+    # Check for null regime ----
+    nul_reg <- check_for_null_regime(rp)
 
-    # Estimate Omega for given probabilities and beta ----
-    vecOmega <- estimate_error_covariances(
-      Phi = model$Phi,
-      beta = model$beta,
-      Z = ds$Z,
-      regprobs = rp,
-      H = model$linres_Omega$H,
-      h = model$linres_Omega$h)
-    Omega <- vec_Omega_2_list_Omega(vecOmega, dim, nreg)
-    model$Omega <- Omega
+    if(nul_reg) {
+      cat('Parameters are: \n')
+      print(pars)
+      stop("One regime has zero probability. Try to reformulate the model.")
+    }
+
+    # Update the model with the parameters ----
+    mod <- estimate_closed_form_pars(pars, mod, ds, rp)
 
     # Calculate the negative likelihod ----
-    - rsci_loglik(model, rp, ds)
+    - rsci_loglik(mod, rp, ds)
   }
 
   # Optimize the concentrated likelihood ---------------------------------------
   opt_res <- optim(init_pars, opt_fn, ...)
 
   # Build and return the fit object --------------------------------------------
-  model_fit <- fn_update(opt_res$par, model)
+  model <- fn_update(opt_res$par, model)
+  rp <- model$fn_prob(opt_res$par, ds)
+  model_fit <- estimate_closed_form_pars(opt_res$par, model, ds, rp)
   fit <- list(
     model = model_fit,
     loglik = opt_res$value,
     data = data,
-    data_exo = data,
-    fn_prob = fn_prob)
+    data_exo = data_exo)
 
   class(fit) <- 'rsci_fit'
-  rsci_fit
+  fit
 }

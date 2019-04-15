@@ -9,14 +9,9 @@
 calculate_regime_residuals <- function(Phi, beta, Z) {
 
   n_regs <- length(Phi)
-
-  if(!is.null(Z$Z2)) {
-    U <- cbind(Z$Z1 %*% beta, Z$Z2)
-  }else {
-    U <- Z$Z1 %*% beta
-  }
+  U <- get_U(Z, beta)
   E <- lapply(
     X = Phi,
-    FUN = function(x) { tcrossprod(U, x) })
+    FUN = function(x) {Z$Z0 - tcrossprod(U, x) })
 
 }

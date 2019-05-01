@@ -4,9 +4,13 @@
 \alias{rsci_data}
 \title{Build the classic cointegration data structures Z0, Z1 and Z2.}
 \usage{
-rsci_data(rank, lags, data, data_exo = NULL)
+rsci_data(rank, lags, data)
 }
 \arguments{
+\item{rank}{integer, the cointegration rank}
+
+\item{lags}{integer, the number of lags in the model}
+
 \item{data}{xts, a matrix with the data that should be fitted.}
 }
 \value{

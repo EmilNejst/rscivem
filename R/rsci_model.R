@@ -4,12 +4,14 @@
 #' @param lags integer, the number of lags in levels in the model.
 #' @param rank integer, the cointegration rank.
 #' @param nreg integer, the number of regimes.
-#' @param beta matrix, the matrix of cointegration relations
-#' @param lambda vector, the vector of probability parameters
+#' @param pars vector, parameters that enter the probability function
+#'        to generate regime probabilities.
 #' @param fn_prob function, a function that takes at least two arguments
 #'        \code{ fn_prob(pars, data_struct) } where pars is a the vector of
 #'        cointegration and probability parameters. data_struct is a rsci_data
 #'        object.
+#' @param beta matrix, the matrix of cointegration relations
+#' @param lambda vector, the vector of probability parameters
 #' @param Phi list, a list with Phi matrices for all regimes. Default is NULL
 #'        in which case a standardized procedure is used for estimating initial
 #'        values.
@@ -39,9 +41,10 @@ rsci_model <- function(dim,
                        rank,
                        lags,
                        nreg,
-                       beta,
-                       lambda,
+                       pars,
                        fn_prob,
+                       beta = NULL,
+                       lambda = NULL,
                        Phi = NULL,
                        Omega = NULL,
                        linres_Phi = rsci_build_linres_Phi(dim, rank, lags, nreg),
@@ -52,6 +55,7 @@ rsci_model <- function(dim,
     rank = rank,
     lags = lags,
     nreg = nreg,
+    pars = pars,
     Phi = Phi,
     Omega = Omega,
     beta = beta,

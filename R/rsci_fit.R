@@ -11,8 +11,6 @@
 #'        Returns a model object. The function must take the following arguments
 #'        fn_update(pars, model). These are the  free parameters in beta and
 #'        the probability functions.
-#' @param data_exo xts, exogenous data in case the regime switching depends on
-#'        such.
 #'
 #' @param ... additional information to be passed to optim().
 #'
@@ -23,7 +21,6 @@ rsci_fit <- function(model,
                      data,
                      init_pars,
                      fn_update,
-                     data_exo = NULL,
                      ...) {
 
   # Model dimensions -----------------------------------------------------------
@@ -33,7 +30,7 @@ rsci_fit <- function(model,
   nreg <- model$nreg
 
   # Data structures ------------------------------------------------------------
-  ds <- rsci_data(rank, lags, data, data_exo)
+  ds <- rsci_data(rank, lags, data)
 
   # Estimate Initial Values for Omega and Phi if not provided ------------------
   if(is.null(model$Omega)) {
@@ -62,9 +59,10 @@ rsci_fit <- function(model,
     nul_reg <- check_for_null_regime(rp)
 
     if(nul_reg) {
-      cat('Parameters are: \n')
+      cat('Non-linear parameters are:\n')
       print(pars)
-      stop("One regime has zero probability. Try to reformulate the model.")
+      str<- paste0('A regime has zero probability. Try to reformulate the model')
+      stop(str)
     }
 
     # Update the model with the parameters ----
@@ -78,14 +76,17 @@ rsci_fit <- function(model,
   opt_res <- optim(init_pars, opt_fn, ...)
 
   # Build and return the fit object --------------------------------------------
+  model$pars <- opt_res$par
   model <- fn_update(opt_res$par, model)
   rp <- model$fn_prob(opt_res$par, ds)
   model_fit <- estimate_closed_form_pars(opt_res$par, model, ds, rp)
+  rp <- lapply(rp, function(x) { xts::xts(x, index(ds$Z$Z0)) })
   fit <- list(
     model = model_fit,
     loglik = opt_res$value,
-    data = data,
-    data_exo = data_exo)
+    pars = opt_res$pars,
+    regprobs = rp,
+    data = data)
 
   class(fit) <- 'rsci_fit'
   fit

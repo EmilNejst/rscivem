@@ -4,19 +4,12 @@
 \alias{rsci_simulate}
 \title{Simulate a data series from a regime switching error correction model}
 \usage{
-rsci_simulate(model, fn_prob, sample_size, data_exo = NULL,
-  burn = NULL)
+rsci_simulate(model, sample_size, burn = 0)
 }
 \arguments{
 \item{model}{rsci_model obj}
 
-\item{fn_prob}{function, a function that provides the regime probabilities
-given a rsci_data type object.}
-
 \item{sample_size}{integer, the size of the sample.}
-
-\item{data_exo}{xts, if fn_prob depends on exogenous variables, they are
-provided here.}
 
 \item{burn}{integer, a number of periods to burn from the begining of the
 sample}

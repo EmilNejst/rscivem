@@ -4,9 +4,10 @@
 \alias{rsci_model}
 \title{Create a regime switching cointegrated vector error correction}
 \usage{
-rsci_model(dim, rank, lags, nreg, beta, lambda, fn_prob, Phi = NULL,
-  Omega = NULL, linres_Phi = rsci_build_linres_Phi(dim, rank, lags,
-  nreg), linres_Omega = rsci_build_linres_Omega(dim, nreg))
+rsci_model(dim, rank, lags, nreg, pars, fn_prob, beta = NULL,
+  lambda = NULL, Phi = NULL, Omega = NULL,
+  linres_Phi = rsci_build_linres_Phi(dim, rank, lags, nreg),
+  linres_Omega = rsci_build_linres_Omega(dim, nreg))
 }
 \arguments{
 \item{dim}{integer, the number of dimentions in the data}
@@ -17,14 +18,17 @@ rsci_model(dim, rank, lags, nreg, beta, lambda, fn_prob, Phi = NULL,
 
 \item{nreg}{integer, the number of regimes.}
 
-\item{beta}{matrix, the matrix of cointegration relations}
-
-\item{lambda}{vector, the vector of probability parameters}
+\item{pars}{vector, parameters that enter the probability function
+to generate regime probabilities.}
 
 \item{fn_prob}{function, a function that takes at least two arguments
 \code{ fn_prob(pars, data_struct) } where pars is a the vector of
 cointegration and probability parameters. data_struct is a rsci_data
 object.}
+
+\item{beta}{matrix, the matrix of cointegration relations}
+
+\item{lambda}{vector, the vector of probability parameters}
 
 \item{Phi}{list, a list with Phi matrices for all regimes. Default is NULL
 in which case a standardized procedure is used for estimating initial

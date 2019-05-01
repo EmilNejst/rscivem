@@ -1,3 +1,9 @@
+#' @title Check for the number
+#'
+#' @param regprobs list, a list of the xts regime probabilities
+#'
+#' @return Boolean TRUE if a regime is deamed neglected
+
 check_for_null_regime <- function(regprobs) {
 
   reg_mat <- do.call(cbind, regprobs)

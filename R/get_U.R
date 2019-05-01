@@ -10,7 +10,11 @@ get_U <- function(Z, beta) {
   if(is.null(Z$Z2)) {
     U <- Z$Z1 %*% beta
   }else {
-    U <- cbind(Z$Z1 %*% beta, Z$Z2)
+    if(is.null(nrow(Z$Z1))) {
+      U <- c(Z$Z1 %*% beta, Z$Z2)
+    } else {
+      U <- cbind(Z$Z1 %*% beta, Z$Z2)
+    }
   }
   U
 
